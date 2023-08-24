@@ -12,10 +12,3 @@ create table address
     person_id bigint
         references person (id)
 );
-
-create table pet
-(
-    name      varchar,
-    person_id bigint
-        references person (id)
-);
