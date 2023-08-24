@@ -15,7 +15,7 @@ class ReactivePersonRepositoryTest : AbstractIntegrationTest() {
     }
 
     @Test
-    fun insertAndSearch() {
+    fun insertAndSearchWithMap() {
         runBlocking {
             val personRepo = ReactivePersonRepository(r2dbcContext)
 
@@ -24,7 +24,19 @@ class ReactivePersonRepositoryTest : AbstractIntegrationTest() {
             personRepo.insertPersonWithMap(PersonIn("Third", "Person", listOf(Address("Line4", "Line5"), Address("Line6", "Line7"))))
             personRepo.insertPersonWithMap(PersonIn("Fourth", "Person", listOf()))
 
-            val retrievedPersons = personRepo.search("First", "Person")
+            val retrievedAddresses = personRepo.getAddresses()
+        }
+    }
+
+    @Test
+    fun insertAndSearchWithValues() {
+        runBlocking {
+            val personRepo = ReactivePersonRepository(r2dbcContext)
+
+            personRepo.insertPersonWithValues(PersonIn("First", "Person", listOf(Address("Line1", "Line2"))))
+            personRepo.insertPersonWithValues(PersonIn("Second", "Person", listOf(Address("Line3", "Line4"))))
+            personRepo.insertPersonWithValues(PersonIn("Third", "Person", listOf(Address("Line4", "Line5"), Address("Line6", "Line7"))))
+            personRepo.insertPersonWithValues(PersonIn("Fourth", "Person", listOf()))
 
             val retrievedAddresses = personRepo.getAddresses()
         }

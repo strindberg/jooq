@@ -7,11 +7,7 @@ import kotlinx.coroutines.reactive.awaitFirst
 import org.jooq.DSLContext
 import org.jooq.Record1
 import org.jooq.ResultQuery
-import org.jooq.impl.DSL.multiset
-import org.jooq.impl.DSL.noCondition
 import org.jooq.impl.DSL.row
-import org.jooq.impl.DSL.select
-import org.jooq.kotlin.mapping
 import se.strindberg.jooqsimple.db.Tables.ADDRESS
 import se.strindberg.jooqsimple.db.Tables.PERSON
 
@@ -29,27 +25,14 @@ class ReactivePersonRepository(val jooq: DSLContext) {
         }
     }
 
-    suspend fun search(firstName: String?, lastName: String?): List<Person> {
-        return jooq.select(
-            row(
-                PERSON.ID,
-                PERSON.FIRST_NAME,
-                PERSON.LAST_NAME,
-                multiset(
-                    select(ADDRESS.LINE1, ADDRESS.LINE2)
-                        .from(ADDRESS)
-                        .where(ADDRESS.PERSON_ID.eq(PERSON.ID)),
-                ).mapping(::Address),
-            ).mapping(::Person),
-        )
-            .from(PERSON)
-            .where(
-                if (firstName != null) {
-                    PERSON.FIRST_NAME.eq(firstName)
-                } else noCondition()
-                    .and(if (lastName != null) PERSON.LAST_NAME.eq(lastName) else noCondition()),
-            )
-            .awaitList()
+    suspend fun insertPersonWithValues(person: PersonIn) {
+        val id = jooq.insertInto(PERSON)
+            .columns(PERSON.FIRST_NAME, PERSON.LAST_NAME)
+            .values(person.firstName, person.lastName).returningResult(PERSON.ID).awaitValue()
+        jooq.insertInto(ADDRESS)
+            .columns(ADDRESS.LINE1, ADDRESS.LINE2, ADDRESS.PERSON_ID)
+            .valuesOfRows(person.addresses.map { address -> row(address.line1, address.line2, id) })
+            .awaitFirst()
     }
 
     suspend fun getAddresses(): List<StandaloneAddress> =
