@@ -1,10 +1,9 @@
-package jooqsimple.model
+package se.strindberg.jooqsimple
 
 import org.jooq.ExecuteContext
 import org.jooq.ExecuteListener
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
-
 
 class PrettyPrinter : ExecuteListener {
 
@@ -22,5 +21,4 @@ class PrettyPrinter : ExecuteListener {
         }
         println()
     }
-
 }

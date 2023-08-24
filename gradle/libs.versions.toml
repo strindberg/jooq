@@ -1,25 +1,33 @@
 [versions]
-flyway = "8.5.13"
-jooq = "3.17.5"
-junit = "5.8.2"
-kotlin = "1.8.0"
-plugin-jooq = "8.0"
+flyway = "9.21.1"
+jooq = "3.18.5"
+junit = "5.10.0"
+kotlin = "1.9.0"
+plugin-jooq = "8.2.1"
+plugin-kotlinter = "3.15.0"
 postgres = "42.2.23"
+postgres-r2dbc = "1.0.2.RELEASE"
+testcontainers = "1.18.3"
 
 [libraries]
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 jooq-core = { module = "org.jooq:jooq", version.ref = "jooq" }
 jooq-kotlin = { module = "org.jooq:jooq-kotlin", version.ref = "jooq" }
+jooq-kotlin-coroutines = { module = "org.jooq:jooq-kotlin-coroutines", version.ref = "jooq" }
 jooq-meta-extensions = { module = "org.jooq:jooq-meta-extensions", version.ref = "jooq" }
 junit-full = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+postgres-r2dbc = { module = "org.postgresql:r2dbc-postgresql", version.ref = "postgres-r2dbc" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
 jooq = ["jooq-core", "jooq-meta-extensions"]
-jooq-kotlin = ["jooq-core", "jooq-kotlin", "jooq-meta-extensions"]
+jooq-kotlin = ["jooq-core", "jooq-kotlin", "jooq-kotlin-coroutines", "jooq-meta-extensions"]
+testcontainers = ["testcontainers-postgres", "testcontainers-junit"]
 
 [plugins]
 jooq = { id = "nu.studer.jooq", version.ref = "plugin-jooq" }
-flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktlint = { id = "org.jmailen.kotlinter", version.ref = "plugin-kotlinter" }

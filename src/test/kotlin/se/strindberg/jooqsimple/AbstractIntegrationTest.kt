@@ -1,8 +1,6 @@
-package jooqsimple.model;
+package se.strindberg.jooqsimple
 
-import jooqsimple.DBPASSWORD
-import jooqsimple.DBURL
-import jooqsimple.DBUSERNAME
+import org.flywaydb.core.Flyway
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
@@ -10,6 +8,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DefaultConfiguration
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.postgresql.ds.PGSimpleDataSource
 import java.sql.Connection
 import java.sql.DriverManager
 
@@ -21,8 +20,21 @@ abstract class AbstractIntegrationTest {
 
     @BeforeAll
     fun setup() {
-        connection = DriverManager.getConnection(DBURL, DBUSERNAME, DBPASSWORD)
+        runFlyway()
+        connection = DriverManager.getConnection(DbContainerWrapper.jdbcUrl())
         dslContext = DSL.using(jooqConfiguration(connection))
+    }
+
+    private fun runFlyway() {
+        val flyway =
+            Flyway.configure().dataSource(PGSimpleDataSource().apply { setURL(DbContainerWrapper.jdbcUrl()) }).load()
+        try {
+            flyway.info()
+            flyway.migrate()
+        } catch (e: Exception) {
+            println(e)
+            throw e
+        }
     }
 
     private fun jooqConfiguration(connectionProvider: Connection?): DefaultConfiguration =
@@ -37,5 +49,4 @@ abstract class AbstractIntegrationTest {
     fun after() {
         connection.close()
     }
-
 }

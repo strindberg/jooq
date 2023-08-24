@@ -4,7 +4,8 @@ Simple gradle based project to demonstrate jOOQ features and issues.
 
 ## Instructions
 
-- Edit [gradle.properties](gradle.properties) to set your database connection settings
+- Run `./gradlew build`
 
-- Run `gradlew build` or `gradlew.bat build`
+## Optional
 
+- To re-generate the jooq code, run `./gradlew generateJooq`
