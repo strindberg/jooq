@@ -7,13 +7,13 @@ class PersonRepositoryTest : AbstractIntegrationTest() {
 
     @BeforeEach
     fun reset() {
-        val personRepo = PersonRepository(dslContext)
+        val personRepo = PersonRepository(jdbcContext)
         personRepo.deleteAll()
     }
 
     @Test
     fun insertAndSearch() {
-        val personRepo = PersonRepository(dslContext)
+        val personRepo = PersonRepository(jdbcContext)
 
         personRepo.insertPerson(Person(1L, "First", "Person", listOf(Address("Line1", "Line2"))))
         personRepo.insertPerson(Person(2L, "Second", "Person", listOf(Address("Line3", "Line4"))))

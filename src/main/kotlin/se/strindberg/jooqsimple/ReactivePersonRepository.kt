@@ -1,28 +1,33 @@
 package se.strindberg.jooqsimple
 
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitFirst
 import org.jooq.DSLContext
-import org.jooq.impl.DSL.insertInto
+import org.jooq.Record1
+import org.jooq.ResultQuery
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.noCondition
 import org.jooq.impl.DSL.row
 import org.jooq.impl.DSL.select
-import org.jooq.kotlin.fetchList
 import org.jooq.kotlin.mapping
 import se.strindberg.jooqsimple.db.Tables.ADDRESS
 import se.strindberg.jooqsimple.db.Tables.PERSON
 
-class PersonRepository(val jooq: DSLContext) {
+class ReactivePersonRepository(val jooq: DSLContext) {
 
-    fun insertPerson(person: Person) {
-        jooq.insertInto(PERSON).values(person.id, person.firstName, person.lastName).execute()
-        jooq.batch(
-            person.addresses.map { address ->
-                insertInto(ADDRESS).values(address.line1, address.line2, person.id)
-            },
-        ).execute()
+    suspend fun insertPerson(person: Person) {
+        jooq.insertInto(PERSON).values(person.id, person.firstName, person.lastName).awaitFirst()
+        person.addresses.forEach { address ->
+            jooq.insertInto(ADDRESS)
+                .columns(ADDRESS.LINE1, ADDRESS.LINE2, ADDRESS.PERSON_ID)
+                .values(address.line1, address.line2, person.id)
+                .awaitFirst()
+        }
     }
 
-    fun search(firstName: String?, lastName: String?): List<Person> {
+    suspend fun search(firstName: String?, lastName: String?): List<Person> {
         return jooq.select(
             row(
                 PERSON.ID,
@@ -42,10 +47,10 @@ class PersonRepository(val jooq: DSLContext) {
                 } else noCondition()
                     .and(if (lastName != null) PERSON.LAST_NAME.eq(lastName) else noCondition()),
             )
-            .fetchList()
+            .awaitList()
     }
 
-    fun getAddresses(): List<StandaloneAddress> =
+    suspend fun getAddresses(): List<StandaloneAddress> =
         jooq.select(
             row(
                 ADDRESS.LINE1,
@@ -57,10 +62,12 @@ class PersonRepository(val jooq: DSLContext) {
                 ).mapping { id, firstName, lastName -> Person(id, firstName, lastName, emptyList()) },
             ).mapping(::StandaloneAddress),
         ).from(ADDRESS)
-            .fetchList()
+            .awaitList()
 
-    fun deleteAll() {
-        jooq.delete(ADDRESS).execute()
-        jooq.delete(PERSON).execute()
+    suspend fun deleteAll() {
+        jooq.delete(ADDRESS).awaitFirst()
+        jooq.delete(PERSON).awaitFirst()
     }
 }
+
+suspend fun <E, R : Record1<E>> ResultQuery<R>.awaitList(): List<E> = asFlow().map { it.value1() }.toList()

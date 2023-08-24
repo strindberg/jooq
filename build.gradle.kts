@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.bundles.jooq.kotlin)
     implementation(libs.flyway)
     implementation(libs.postgres)
+    implementation(libs.postgres.r2dbc)
 
     testImplementation(libs.junit.full)
     testImplementation(libs.bundles.testcontainers)
