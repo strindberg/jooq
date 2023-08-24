@@ -17,12 +17,14 @@ import se.strindberg.jooqsimple.db.Tables.PERSON
 
 class ReactivePersonRepository(val jooq: DSLContext) {
 
-    suspend fun insertPerson(person: Person) {
-        jooq.insertInto(PERSON).values(person.id, person.firstName, person.lastName).awaitFirst()
+    suspend fun insertPersonWithMap(person: PersonIn) {
+        val id = jooq.insertInto(PERSON)
+            .columns(PERSON.FIRST_NAME, PERSON.LAST_NAME)
+            .values(person.firstName, person.lastName).returningResult(PERSON.ID).awaitValue()
         person.addresses.forEach { address ->
             jooq.insertInto(ADDRESS)
                 .columns(ADDRESS.LINE1, ADDRESS.LINE2, ADDRESS.PERSON_ID)
-                .values(address.line1, address.line2, person.id)
+                .values(address.line1, address.line2, id)
                 .awaitFirst()
         }
     }
@@ -71,3 +73,5 @@ class ReactivePersonRepository(val jooq: DSLContext) {
 }
 
 suspend fun <E, R : Record1<E>> ResultQuery<R>.awaitList(): List<E> = asFlow().map { it.value1() }.toList()
+
+suspend fun <E, R : Record1<E>> ResultQuery<R>.awaitValue(): E = awaitFirst().value1()

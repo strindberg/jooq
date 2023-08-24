@@ -19,10 +19,10 @@ class ReactivePersonRepositoryTest : AbstractIntegrationTest() {
         runBlocking {
             val personRepo = ReactivePersonRepository(r2dbcContext)
 
-            personRepo.insertPerson(Person(1L, "First", "Person", listOf(Address("Line1", "Line2"))))
-            personRepo.insertPerson(Person(2L, "Second", "Person", listOf(Address("Line3", "Line4"))))
-            personRepo.insertPerson(Person(3L, "Third", "Person", listOf(Address("Line4", "Line5"), Address("Line6", "Line7"))))
-            personRepo.insertPerson(Person(4L, "Fourth", "Person", listOf()))
+            personRepo.insertPersonWithMap(PersonIn("First", "Person", listOf(Address("Line1", "Line2"))))
+            personRepo.insertPersonWithMap(PersonIn("Second", "Person", listOf(Address("Line3", "Line4"))))
+            personRepo.insertPersonWithMap(PersonIn("Third", "Person", listOf(Address("Line4", "Line5"), Address("Line6", "Line7"))))
+            personRepo.insertPersonWithMap(PersonIn("Fourth", "Person", listOf()))
 
             val retrievedPersons = personRepo.search("First", "Person")
 

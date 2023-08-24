@@ -1,7 +1,8 @@
 package se.strindberg.jooqsimple
 
 import org.jooq.DSLContext
-import org.jooq.impl.DSL.insertInto
+import org.jooq.Record1
+import org.jooq.ResultQuery
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.noCondition
 import org.jooq.impl.DSL.row
@@ -13,13 +14,16 @@ import se.strindberg.jooqsimple.db.Tables.PERSON
 
 class PersonRepository(val jooq: DSLContext) {
 
-    fun insertPerson(person: Person) {
-        jooq.insertInto(PERSON).values(person.id, person.firstName, person.lastName).execute()
-        jooq.batch(
-            person.addresses.map { address ->
-                insertInto(ADDRESS).values(address.line1, address.line2, person.id)
-            },
-        ).execute()
+    fun insertPerson(person: PersonIn) {
+        val id = jooq.insertInto(PERSON)
+            .columns(PERSON.FIRST_NAME, PERSON.LAST_NAME)
+            .values(person.firstName, person.lastName).returningResult(PERSON.ID).fetchValue()
+        person.addresses.forEach { address ->
+            jooq.insertInto(ADDRESS)
+                .columns(ADDRESS.LINE1, ADDRESS.LINE2, ADDRESS.PERSON_ID)
+                .values(address.line1, address.line2, id)
+                .execute()
+        }
     }
 
     fun search(firstName: String?, lastName: String?): List<Person> {
@@ -64,3 +68,5 @@ class PersonRepository(val jooq: DSLContext) {
         jooq.delete(PERSON).execute()
     }
 }
+
+fun <E, R : Record1<E>> ResultQuery<R>.fetchValue(): E? = fetchOne { it.value1() }
