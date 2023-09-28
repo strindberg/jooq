@@ -3,7 +3,6 @@ import org.jooq.meta.jaxb.Logging
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.jooq)
-    alias(libs.plugins.ktlint)
 }
 
 group = "jooqsimple"
@@ -69,12 +68,4 @@ jooq {
             }
         }
     }
-}
-
-tasks.lintKotlinMain {
-    source = (source - fileTree(generatedPath)).asFileTree
-}
-
-tasks.formatKotlinMain {
-    source = (source - fileTree(generatedPath)).asFileTree
 }

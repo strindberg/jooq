@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitLast
 import org.jooq.DSLContext
 import org.jooq.Record1
 import org.jooq.ResultQuery
@@ -32,7 +33,7 @@ class ReactivePersonRepository(val jooq: DSLContext) {
         jooq.insertInto(ADDRESS)
             .columns(ADDRESS.LINE1, ADDRESS.LINE2, ADDRESS.PERSON_ID)
             .valuesOfRows(person.addresses.map { address -> row(address.line1, address.line2, id) })
-            .awaitFirst()
+            .awaitLast()
     }
 
     suspend fun getAddresses(): List<StandaloneAddress> =

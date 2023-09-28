@@ -24,7 +24,7 @@ class ReactivePersonRepositoryTest : AbstractIntegrationTest() {
             personRepo.insertPersonWithMap(PersonIn("Third", "Person", listOf(Address("Line4", "Line5"), Address("Line6", "Line7"))))
             personRepo.insertPersonWithMap(PersonIn("Fourth", "Person", listOf()))
 
-            val retrievedAddresses = personRepo.getAddresses()
+            personRepo.getAddresses()
         }
     }
 
@@ -38,7 +38,7 @@ class ReactivePersonRepositoryTest : AbstractIntegrationTest() {
             personRepo.insertPersonWithValues(PersonIn("Third", "Person", listOf(Address("Line4", "Line5"), Address("Line6", "Line7"))))
             personRepo.insertPersonWithValues(PersonIn("Fourth", "Person", listOf()))
 
-            val retrievedAddresses = personRepo.getAddresses()
+            personRepo.getAddresses()
         }
     }
 }
