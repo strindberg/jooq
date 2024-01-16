@@ -38,14 +38,13 @@ abstract class AbstractIntegrationTest {
         }
     }
 
-    private fun jooqContext(connectionProvider: Connection): DSLContext =
-        DSL.using(
-            DefaultConfiguration().apply {
-                set(SQLDialect.POSTGRES)
-                set(connectionProvider)
-                set(Settings().withRenderFormatted(true).withRenderSchema(false))
-            },
-        )
+    private fun jooqContext(connectionProvider: Connection): DSLContext = DSL.using(
+        DefaultConfiguration().apply {
+            set(SQLDialect.POSTGRES)
+            set(connectionProvider)
+            set(Settings().withRenderFormatted(true).withRenderSchema(false))
+        },
+    )
 
     private fun jooqContext(connectionFactory: ConnectionFactory): DSLContext =
         DSL.using(connectionFactory, SQLDialect.POSTGRES, Settings().withRenderFormatted(true).withRenderSchema(false))

@@ -12,8 +12,7 @@ class DbContainerWrapper {
         fun jdbcUrl() = "jdbc:postgresql://${container.host}:${container.firstMappedPort}/${container.databaseName}" +
             "?user=${container.username}&password=${container.password}"
 
-        fun r2dbcUrl() =
-            "r2dbc:postgresql://${container.username}:${container.password}" +
-                "@${container.host}:${container.firstMappedPort}/${container.databaseName}"
+        fun r2dbcUrl() = "r2dbc:postgresql://${container.username}:${container.password}" +
+            "@${container.host}:${container.firstMappedPort}/${container.databaseName}"
     }
 }

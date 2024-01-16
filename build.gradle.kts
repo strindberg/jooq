@@ -1,4 +1,4 @@
-import org.jooq.meta.jaxb.Logging
+import org.jooq.meta.jaxb.Logging.WARN
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -23,13 +23,7 @@ dependencies {
     testImplementation(libs.junit.full)
     testImplementation(libs.bundles.testcontainers)
 
-    jooqGenerator(libs.bundles.jooq)
-}
-
-val generatedPath = "$projectDir/src/main/generated"
-
-kotlin.sourceSets.main {
-    kotlin.srcDir(generatedPath)
+    jooqCodegen(libs.bundles.jooq)
 }
 
 tasks.compileKotlin {
@@ -46,35 +40,21 @@ tasks.test {
 }
 
 jooq {
-    version = libs.versions.jooq
-    configurations {
-        create("main") {
-            generateSchemaSourceOnCompilation = false
-            jooqConfiguration.apply {
-                logging = Logging.WARN
-                generator.apply {
-                    name = "org.jooq.codegen.JavaGenerator"
-                    database.apply {
-                        name = "org.jooq.meta.extensions.ddl.DDLDatabase"
-                        properties.add(org.jooq.meta.jaxb.Property().withKey("scripts").withValue("src/main/resources/db/migration/*.sql"))
-                        properties.add(org.jooq.meta.jaxb.Property().withKey("sort").withValue("flyway"))
-                        properties.add(org.jooq.meta.jaxb.Property().withKey("defaultNameCase").withValue("lower"))
-                        schemaVersionProvider = "none"
-                        target.apply {
-                            packageName = "se.strindberg.jooqsimple.db"
-                            directory = generatedPath
-                        }
-                    }
+    configuration {
+        logging = WARN
+        generator {
+            name = "org.jooq.codegen.JavaGenerator"
+            database {
+                name = "org.jooq.meta.extensions.ddl.DDLDatabase"
+                properties.add(org.jooq.meta.jaxb.Property().withKey("scripts").withValue("src/main/resources/db/migration/*.sql"))
+                properties.add(org.jooq.meta.jaxb.Property().withKey("sort").withValue("flyway"))
+                properties.add(org.jooq.meta.jaxb.Property().withKey("defaultNameCase").withValue("lower"))
+                schemaVersionProvider = "none"
+                target {
+                    packageName = "se.strindberg.jooqsimple.db"
+                    directory = "$projectDir/src/main/java"
                 }
             }
         }
     }
-}
-
-tasks.lintKotlinMain {
-    source = (source - fileTree(generatedPath)).asFileTree
-}
-
-tasks.formatKotlinMain {
-    source = (source - fileTree(generatedPath)).asFileTree
 }

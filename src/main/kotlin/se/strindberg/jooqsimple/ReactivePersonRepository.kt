@@ -46,25 +46,26 @@ class ReactivePersonRepository(val jooq: DSLContext) {
             .where(
                 if (firstName != null) {
                     PERSON.FIRST_NAME.eq(firstName)
-                } else noCondition()
-                    .and(if (lastName != null) PERSON.LAST_NAME.eq(lastName) else noCondition()),
+                } else {
+                    noCondition()
+                        .and(if (lastName != null) PERSON.LAST_NAME.eq(lastName) else noCondition())
+                },
             )
             .awaitList()
     }
 
-    suspend fun getAddresses(): List<StandaloneAddress> =
-        jooq.select(
+    suspend fun getAddresses(): List<StandaloneAddress> = jooq.select(
+        row(
+            ADDRESS.LINE1,
+            ADDRESS.LINE2,
             row(
-                ADDRESS.LINE1,
-                ADDRESS.LINE2,
-                row(
-                    ADDRESS.person().ID,
-                    ADDRESS.person().FIRST_NAME,
-                    ADDRESS.person().LAST_NAME,
-                ).mapping { id, firstName, lastName -> Person(id, firstName, lastName, emptyList()) },
-            ).mapping(::StandaloneAddress),
-        ).from(ADDRESS)
-            .awaitList()
+                ADDRESS.person().ID,
+                ADDRESS.person().FIRST_NAME,
+                ADDRESS.person().LAST_NAME,
+            ).mapping { id, firstName, lastName -> Person(id, firstName, lastName, emptyList()) },
+        ).mapping(::StandaloneAddress),
+    ).from(ADDRESS)
+        .awaitList()
 
     suspend fun deleteAll() {
         jooq.delete(ADDRESS).awaitFirst()
