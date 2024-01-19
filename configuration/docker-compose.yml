@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  postgres-generate:
+    image: postgres:15-alpine
+    ports:
+      - 127.0.0.1:6432:5432
+    environment:
+      POSTGRES_USER: generate
+      POSTGRES_PASSWORD: secret
+      POSTGRES_INITDB_ARGS: --data-checksums

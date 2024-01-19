@@ -5,7 +5,6 @@ junit = "5.10.0"
 kotlin = "1.9.22"
 kotlinter = "4.2.0"
 postgres = "42.6.0"
-postgres-r2dbc = "1.0.2.RELEASE"
 testcontainers = "1.18.3"
 
 [libraries]
@@ -17,7 +16,6 @@ jooq-meta-extensions = { module = "org.jooq:jooq-meta-extensions", version.ref =
 junit-full = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
-postgres-r2dbc = { module = "org.postgresql:r2dbc-postgresql", version.ref = "postgres-r2dbc" }
 testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
@@ -27,6 +25,7 @@ jooq-kotlin = ["jooq-core", "jooq-kotlin", "jooq-kotlin-coroutines", "jooq-meta-
 testcontainers = ["testcontainers-postgres", "testcontainers-junit"]
 
 [plugins]
+flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 jooq = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktlint = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
