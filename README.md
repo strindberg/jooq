@@ -8,4 +8,4 @@ Simple gradle based project to demonstrate jOOQ features and issues.
 
 ## Optional
 
-- To re-generate the jooq code, run `./gradlew generateJooq`
+- To re-generate the jooq code, run `./gradlew jooqCodegen`
