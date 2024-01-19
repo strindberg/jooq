@@ -2,6 +2,7 @@ import org.jooq.meta.jaxb.Logging.WARN
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.flyway)
     alias(libs.plugins.jooq)
     alias(libs.plugins.ktlint)
 }

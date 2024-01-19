@@ -27,6 +27,7 @@ jooq-kotlin = ["jooq-core", "jooq-kotlin", "jooq-kotlin-coroutines", "jooq-meta-
 testcontainers = ["testcontainers-postgres", "testcontainers-junit"]
 
 [plugins]
+flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 jooq = { id = "org.jooq.jooq-codegen-gradle", version.ref = "jooq" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktlint = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
